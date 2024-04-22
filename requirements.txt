@@ -3,3 +3,13 @@ numpy
 pandas
 pydeck
 streamlit
+openai
+llama_index
+pypdf
+transformers
+einops
+llama-index-embeddings-langchain
+accelerate
+langchain
+bitsandbytes
+sentence_transformers
