@@ -1,51 +1,35 @@
-# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022)
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
+import os
 import streamlit as st
-from streamlit.logger import get_logger
+from dotenv import load_dotenv
+import openai
 
-LOGGER = get_logger(__name__)
+# Import API key directly from config.py
+from config import OPENAI_API_KEY
+from llama_index.core import ServiceContext, VectorStoreIndex, SimpleDirectoryReader
+from llama_index.llms.openai import OpenAI
 
+# Load environment variables from .env file
+load_dotenv()
+# Get API key from environment, or use the one from config.py if not found
+openai.api_key = os.getenv("OPENAI_API_KEY", OPENAI_API_KEY)
 
-def run():
-    st.set_page_config(
-        page_title="Hello",
-        page_icon="👋",
+def main():
+    st.header("Ask any question about robots")
+    reader = SimpleDirectoryReader(input_dir="./data", recursive=True)
+    docs = reader.load_data()
+
+    # Since ServiceContext.from_defaults might be deprecated or incorrect, check the latest usage in the llama_index documentation
+    # Assuming it's still correct, use it here:
+    service_context = ServiceContext.from_defaults(
+        llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5,
+                   system_prompt="You are an expert on industrial robots, tasked with helping users find the ideal robot for their needs from our catalog. Focus on specifications like payload, reach, and application suitability. Answer only questions about industrial robots, ignoring unrelated topics.")
     )
+    index = VectorStoreIndex.from_documents(docs, service_context=service_context)
+    query = st.text_input("Ask a question we can solve with a robot")
+    if query:
+        chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
+        response = chat_engine.chat(query)
+        st.write(response.response)
 
-    st.write("# Welcome to Streamlit! 👋")
-
-    st.sidebar.success("Select a demo above.")
-
-    st.markdown(
-        """
-        Streamlit is an open-source app framework built specifically for
-        Machine Learning and Data Science projects.
-        **👈 Select a demo from the sidebar** to see some examples
-        of what Streamlit can do!
-        ### Want to learn more?
-        - Check out [streamlit.io](https://streamlit.io)
-        - Jump into our [documentation](https://docs.streamlit.io)
-        - Ask a question in our [community
-          forums](https://discuss.streamlit.io)
-        ### See more complex demos
-        - Use a neural net to [analyze the Udacity Self-driving Car Image
-          Dataset](https://github.com/streamlit/demo-self-driving)
-        - Explore a [New York City rideshare dataset](https://github.com/streamlit/demo-uber-nyc-pickups)
-    """
-    )
-
-
-if __name__ == "__main__":
-    run()
+if __name__ == '__main__':
+    main()
