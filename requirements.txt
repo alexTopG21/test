@@ -13,3 +13,4 @@ accelerate
 langchain
 bitsandbytes
 sentence_transformers
+python-dotenv
