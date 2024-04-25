@@ -22,13 +22,13 @@ def main():
     if query:
         chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
         response = chat_engine.chat(query)
-        # Assuming the response is a URL or contains a URL
         url = response.response.strip()
         if "http" in url:  # Check if the response contains a URL
-            # Make sure to use the correct Markdown format for the hyperlink
-            st.markdown(f'[Click here to see the robot details]({url})', unsafe_allow_html=True)
+            robot_name = url.split('/')[-1].replace('-', ' ').title()  # Extracting and formatting robot name from URL
+            st.markdown(f"Here's a robot that can help you: **{robot_name}**")
+            st.markdown(f"[Click here to view details about {robot_name}]({url})", unsafe_allow_html=True)
         else:
-            st.write("Response does not contain a URL.")
+            st.write("No specific robot could be found for your query. Please try another question.")
 
 if __name__ == '__main__':
     main()
