@@ -22,12 +22,9 @@ def main():
     if query:
         chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
         response = chat_engine.chat(query)
-        # Check if the response contains a URL and make it clickable
-        if "http" in response.response:
-            url = response.response.strip()  # Assuming the response is a single URL
-            st.markdown(f"[Click here to visit the robot]({url})", unsafe_allow_html=True)
-        else:
-            st.write(response.response)
+        # Assuming the response is a URL or contains a URL
+        url = response.response.strip()
+        st.markdown(f"[Click here to see the robot details]({url})", unsafe_allow_html=True)
 
 if __name__ == '__main__':
     main()
