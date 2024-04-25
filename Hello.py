@@ -18,7 +18,7 @@ def main():
     docs = reader.load_data()
     service_context = ServiceContext.from_defaults(
         llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5,
-                   system_prompt="You are an expert on industrial robots, tasked with helping users find the ideal robot for their needs from our catalog. Focus on specifications like payload, reach, and application suitability. Answer only questions about industrial robots, ignoring unrelated topics.")
+                   system_prompt="You are an expert on industrial robots, your task is to give users URL to the website where the robot adapted to their use case is. The url are in the document provided")
     )
     index = VectorStoreIndex.from_documents(docs, service_context=service_context)
     query = st.text_input("Ask a question we can solve with a robot")
