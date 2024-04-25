@@ -24,7 +24,11 @@ def main():
         response = chat_engine.chat(query)
         # Assuming the response is a URL or contains a URL
         url = response.response.strip()
-        st.markdown(f"[Click here to see the robot details]({url})", unsafe_allow_html=True)
+        if "http" in url:  # Check if the response contains a URL
+            # Make sure to use the correct Markdown format for the hyperlink
+            st.markdown(f'[Click here to see the robot details]({url})', unsafe_allow_html=True)
+        else:
+            st.write("Response does not contain a URL.")
 
 if __name__ == '__main__':
     main()
