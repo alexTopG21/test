@@ -26,7 +26,7 @@ def main():
         if "http" in url:  # Check if the response contains a URL
             robot_name = url.split('/')[-1].replace('-', ' ').title()  # Extracting and formatting robot name from URL
             st.markdown(f"**Recommended Robot:**")
-            st.markdown(f"1. [{robot_name}]({url}) - This robot is designed for {query.lower()}. Click the link to learn more about how it can assist with your specific needs.")
+            st.markdown(f"[{robot_name}]({url}) - This robot is designed to assist with {query.lower()}. Click the link to learn more about how it can meet your specific needs.")
         else:
             st.write("No specific robot could be found for your query. Please try another question.")
 
