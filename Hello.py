@@ -29,11 +29,12 @@ def main():
             st.markdown("**Recommended Robots:**")
             for url in urls[:3]:  # Limit to top 3 relevant robots
                 robot_name = url.split('/')[-1].replace('-', ' ').title()  # Extracting and formatting robot name from URL
-                st.markdown(f"[{robot_name}]({url}) - This robot is designed to meet specialized requirements. Click the link for more details.")
+                st.markdown(f"- [{robot_name}]({url}) - This robot is designed to meet specialized requirements. Click the link for more details.")
         else:
-            st.write("No specific robots could be found for your query. Please try another question.")
+            st.write("No specific robots could be found for your query. Please try another question or refine your search.")
 
 if __name__ == '__main__':
     main()
+
 
 
