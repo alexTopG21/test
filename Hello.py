@@ -15,21 +15,25 @@ def main():
     docs = reader.load_data()
     service_context = ServiceContext.from_defaults(
         llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5,
-                   system_prompt="You are an expert on industrial robots, your task is to give users URL to the website where the robot adapted to their use case is. The urls are in the document provided")
+                   system_prompt="You are an expert on industrial robots. Provide URLs to websites where robots adapted to user cases are listed.")
     )
     index = VectorStoreIndex.from_documents(docs, service_context=service_context)
     query = st.text_input("Ask a question we can solve with a robot")
     if query:
         chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
         response = chat_engine.chat(query)
-        url = response.response.strip()
-        if "http" in url:  # Check if the response contains a URL
-            robot_name = url.split('/')[-1].replace('-', ' ').title()  # Extracting and formatting robot name from URL
-            st.markdown(f"**Recommended Robot:**")
-            st.markdown(f"[{robot_name}]({url}) - This robot is designed to meet specialized requirements. Click the link to learn more about its capabilities and how it can be tailored to your specific needs.")
+        urls = response.response.strip().split()  # Assuming multiple URLs could be returned, separated by spaces
+        urls = [url for url in urls if "http" in url]  # Filter to include only valid URLs
+
+        if urls:
+            st.markdown("**Recommended Robots:**")
+            for url in urls[:3]:  # Limit to top 3 relevant robots
+                robot_name = url.split('/')[-1].replace('-', ' ').title()  # Extracting and formatting robot name from URL
+                st.markdown(f"[{robot_name}]({url}) - This robot is designed to meet specialized requirements. Click the link for more details.")
         else:
-            st.write("No specific robot could be found for your query. Please try another question.")
+            st.write("No specific robots could be found for your query. Please try another question.")
 
 if __name__ == '__main__':
     main()
+
 
